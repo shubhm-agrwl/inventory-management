@@ -1,0 +1,56 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8443
+  adminConnectors:
+    - type: http
+      port: 8444
+
+logging:
+  type: external
+
+engineId: e1
+
+queueConfig:
+  queueName: inventory_queue
+  threadPoolSize: 1
+  partitionsToListen: 1
+
+kafkaConsumerConfig:
+  bootstrap.servers: localhost:9092
+  group.id: engine_consumer_2
+  key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  max.poll.records: 100
+
+kafkaConsumerPollInterval: 100
+
+dataSourceFactory:
+  driverClass: org.apache.ignite.IgniteJdbcThinDriver
+  user:
+  password:
+  url: jdbc:ignite:thin://localhost
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+  checkConnectionOnBorrow: true
+
+tableSchema:
+  truck_inventory: [
+    id,
+    truck_id,
+    truck_registration,
+    site_entry,
+    site_exit,
+    refinery_entry,
+    refinery_exit,
+    warehouse_entry,
+    warehouse_exit
+  ]
+         

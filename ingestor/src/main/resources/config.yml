@@ -1,0 +1,53 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 12082
+  adminConnectors:
+    - type: http
+      port: 12083
+  requestLog:
+    type: external
+
+logging:
+  type: external
+
+kafkaProducerConfig:
+  bootstrap.servers: localhost:9092
+  client.id: inventory_producer_grp_1
+  key.serializer: org.apache.kafka.common.serialization.LongSerializer
+  value.serializer: org.apache.kafka.common.serialization.StringSerializer
+
+queueName: inventory_queue
+
+authenticationEnabled: true
+
+ingestorId: i1
+
+canStartTripInDays: 7
+
+dataSourceFactory:
+  driverClass: org.apache.ignite.IgniteJdbcThinDriver
+  user:
+  password:
+  url: jdbc:ignite:thin://localhost
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+  checkConnectionOnBorrow: true
+
+checkpointOrder:
+  truck_inventory: [
+    truck_registration,
+    site_entry,
+    site_exit,
+    refinery_entry,
+    refinery_exit,
+    warehouse_entry,
+    warehouse_exit
+  ]
